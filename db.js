@@ -32,18 +32,15 @@ const Companies = db.define('company', {
 const Offerings = db.define('offering', {
   price: {
     type: Sequelize.DECIMAL,
+    defaultValue: 1.0
   }
 })
 
 
-Products.belongsTo(Companies)
-Companies.hasMany(Products)
 
-Offerings.belongsToMany(Products, {through: 'productOfferings'})
-Products.belongsToMany(Offerings, {through: 'productOfferings'})
+Products.belongsToMany(Companies, {through: 'offering'})
+Companies.belongsToMany(Products, {through: 'offering'})
 
-// Products.hasMany(Offerings)
-// Companies.hasMany(Offerings)
 
 
 const seed = async() => {
@@ -81,20 +78,29 @@ const seed = async() => {
 
   const offering1 = await Offerings.create({
     price: 2.9,
+    companyId: acmeUs.id,
+    productId: quq.id
   })
 
   const offering2 = await Offerings.create({
-    price: 2.8
+    price: 2.8,
+    companyId: acmeGlobal.id,
+    productId: bazz.id
   })
 
   const offering3 = await Offerings.create({
-    price: 4.5
+    price: 4.5,
+    companyId: acmeTri.id,
+    productId: bar.id
   })
 
   const offering4 = await Offerings.create({
-    price: 11
+    price: 11,
+    companyId: acmeUs.id,
+    productId: foo.id
   })
 }
+
 
 const syncAndSeed = () => {
   return db.sync({ force: true })
@@ -105,4 +111,11 @@ const syncAndSeed = () => {
   })
 }
 
-syncAndSeed()
+
+module.exports = {
+  syncAndSeed,
+  Products,
+  Companies,
+  Offerings
+}
+
